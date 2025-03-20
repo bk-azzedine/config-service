@@ -1,7 +1,27 @@
 server:
   port: 8080
 
-
+spring:
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      routes:
+        - id: auth-service
+          uri: lb://AUTH-SERVICE
+          predicates:
+            - Path=/api/auth/**
+          filters:
+            - AddResponseHeader=X-Response-Time, ${now:yyyy-MM-dd'T'HH:mm:ss.SSS'Z'}
+            - RewritePath=/api/auth/(?<segment>.*), /auth/${segment}
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/api/user/**
+          filters:
+            - RewritePath=/api/user/(?<segment>.*), /user/${segment}
 
 
 logging:
