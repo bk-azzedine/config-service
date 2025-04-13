@@ -22,6 +22,12 @@ spring:
             - Path=/api/user/**
           filters:
             - RewritePath=/api/user/(?<segment>.*), /user/${segment}
+        - id: organization-service
+          uri: lb://ORGANIZATION-SERVICE
+          predicates:
+            - Path=/api/org/**
+          filters:
+            - RewritePath=/api/org/(?<segment>.*), /org/${segment}
 
 
 logging:
