@@ -28,9 +28,12 @@ spring:
             - Path=/api/org/**
           filters:
             - RewritePath=/api/org/(?<segment>.*), /org/${segment}
+        - id: document-service
+          uri: lb://DOCUMENT-SERVICE
+          predicates:
+            - Path=/api/doc/**
+          filters:
+            - RewritePath=/api/doc/(?<segment>.*), /doc/${segment}
 
 
-logging:
-  level:
-    org.springframework.cloud.gateway: DEBUG
-    reactor.netty.http.client: DEBUG
+
