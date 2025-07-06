@@ -1,4 +1,17 @@
+server:
+  port: 8085
+
 spring:
+  application:
+    name: email-service
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: admin
+    password: Bakaazzedine456
+    template:
+      default-receive-queue: email-queue
+      exchange: data-exchange
   mail:
     host: localhost
     port: 1025

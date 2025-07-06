@@ -1,4 +1,16 @@
+server:
+  port: 8084
+
 spring:
+  application:
+    name: document-service
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: admin
+    password: Bakaazzedine456
+    template:
+      exchange: data-exchange
   data:
     mongodb:
       host: localhost

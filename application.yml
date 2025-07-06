@@ -22,6 +22,12 @@ management:
     export:
       prometheus:
         enabled: true
+  zipkin:
+    tracing:
+      endpoint: http://localhost:9411/api/v2/spans
+  endpoint:
+    health:
+      show-details: always
 
 spring:
   zipkin:
@@ -29,7 +35,11 @@ spring:
   sleuth:
     sampler:
       probability: 1.0
-
+  cloud:
+    config:
+      uri: http://localhost:8888
+  config:
+    import: optional:configserver:http://localhost:8888
 
 # Comprehensive logging configuration
 logging:
