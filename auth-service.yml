@@ -1,34 +1,92 @@
 server:
-  port: 8082
-
+  port: 8081
 spring:
+  application:
+    name: auth-service
   cloud:
     config:
       uri: http://localhost:8888
   config:
     import: optional:configserver:http://localhost:8888
-  application:
-    name: auth-service
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5435/auth
+    username: postgres
+    password: Bakaazzedine456
+  flyway:
+    url: jdbc:postgresql://localhost:5435/auth
+    user: postgres
+    password: Bakaazzedine456
+    locations: classpath:migration
   rabbitmq:
     host: localhost
     port: 5672
     username: admin
     password: Bakaazzedine456
     template:
+      default-receive-queue: auth-queue
       exchange: data-exchange
-  flyway:
-    baseline-on-migrate: true
-    enabled: true
-    user: postgres
-    password: Bakaazzedine456
-    baseline-version: 0
-    locations: classpath:migration
-    url: jdbc:postgresql://localhost:5435/auth
-  r2dbc:
-    url: r2dbc:postgresql://localhost:5435/auth
-    username: postgres
-    password: Bakaazzedine456
 
-jwt:
-  secret-key: VGhpc1NIaXRJc1RoZVNjcmV0S2V5Rm9yV2hhdGV2ZXI=
-  expiration-time: 864_000_000
+# Resilience4j Circuit Breaker Configuration
+resilience4j:
+  circuitbreaker:
+    instances:
+      userService:
+        sliding-window-size: 10
+        minimum-number-of-calls: 5
+        permitted-number-of-calls-in-half-open-state: 3
+        automatic-transition-from-open-to-half-open-enabled: true
+        wait-duration-in-open-state: 5s
+        failure-rate-threshold: 50
+        event-consumer-buffer-size: 10
+      organizationService:
+        sliding-window-size: 10
+        minimum-number-of-calls: 5
+        permitted-number-of-calls-in-half-open-state: 3
+        automatic-transition-from-open-to-half-open-enabled: true
+        wait-duration-in-open-state: 5s
+        failure-rate-threshold: 50
+        event-consumer-buffer-size: 10
+  retry:
+    instances:
+      userService:
+        max-attempts: 3
+        wait-duration: 1s
+        retry-exceptions:
+          - org.springframework.web.reactive.function.client.WebClientResponseException
+          - java.net.ConnectException
+      organizationService:
+        max-attempts: 3
+        wait-duration: 1s
+        retry-exceptions:
+          - org.springframework.web.reactive.function.client.WebClientResponseException
+          - java.net.ConnectException
+  timelimiter:
+    instances:
+      userService:
+        timeout-duration: 3s
+        cancel-running-future: true
+      organizationService:
+        timeout-duration: 3s
+        cancel-running-future: true
+
+# Spring Boot 3.x Zipkin configuration
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+  zipkin:
+    tracing:
+      endpoint: http://localhost:9411/api/v2/spans
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+
+
+
+
+
+
