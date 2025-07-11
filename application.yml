@@ -177,7 +177,6 @@ logging:
       max-history: 7
       total-size-cap: 100MB
       file-name-pattern: logs/archived/application-%d{yyyy-MM-dd}.%i.log.gz
-      clean-history-on-start: true
 
 # Resilience patterns
 resilience4j:
