@@ -1,15 +1,11 @@
 eureka:
   client:
     service-url:
+      fetch-registry: true
+      register-with-eureka: true
       defaultZone: http://localhost:8761/eureka/
-    fetch-registry: true
-    register-with-eureka: true
-    healthcheck:
-      enabled: true
   instance:
     prefer-ip-address: true
-    lease-renewal-interval-in-seconds: 30
-    lease-expiration-duration-in-seconds: 90
 
 management:
   tracing:
@@ -18,17 +14,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info,metrics,loggers,prometheus
-      base-path: /actuator
-  endpoint:
-    health:
-      show-details: always
-      probes:
-        enabled: true
-    metrics:
-      enabled: true
-    prometheus:
-      enabled: true
+        include: health,info,metrics,loggers
   health:
     defaults:
       enabled: true
@@ -36,164 +22,54 @@ management:
     export:
       prometheus:
         enabled: true
-    distribution:
-      percentiles-histogram:
-        http.server.requests: true
-      percentiles:
-        http.server.requests: 0.5, 0.9, 0.95, 0.99
   zipkin:
     tracing:
       endpoint: http://localhost:9411/api/v2/spans
+  endpoint:
+    health:
+      show-details: always
 
 spring:
-
-
-  # Distributed tracing configuration
+  zipkin:
+    base-url: http://zipkin:9411
   sleuth:
-    zipkin:
-      base-url: http://localhost:9411
     sampler:
       probability: 1.0
-    web:
-      skip-pattern: /actuator.*|/health.*|/info.*
-
-  # Cloud configuration
   cloud:
     config:
       uri: http://localhost:8888
-      fail-fast: false
-      retry:
-        initial-interval: 1000
-        max-attempts: 6
-        max-interval: 2000
-        multiplier: 1.1
-    loadbalancer:
-      ribbon:
-        enabled: false
-
-  # Import configuration
   config:
     import: optional:configserver:http://localhost:8888
 
-  # JPA/Hibernate configuration
-  jpa:
-    open-in-view: false
-    hibernate:
-      ddl-auto: validate
-    properties:
-      hibernate:
-        jdbc:
-          batch_size: 25
-        order_inserts: true
-        order_updates: true
-        batch_versioned_data: true
-        generate_statistics: false
-        format_sql: false
-        show_sql: false
-
-  # Connection pool configuration
-  datasource:
-    hikari:
-      maximum-pool-size: 20
-      minimum-idle: 5
-      idle-timeout: 300000
-      connection-timeout: 20000
-      max-lifetime: 1200000
-      leak-detection-threshold: 60000
-
-# Server configuration
-server:
-  shutdown: graceful
-  compression:
-    enabled: true
-    mime-types: application/json,application/xml,text/html,text/xml,text/plain,application/javascript,text/css
-  forward-headers-strategy: framework
-
-# Optimized logging configuration
+# Comprehensive logging configuration
 logging:
   level:
-    # Root and framework logging
     root: INFO
     org.springframework: INFO
     org.springframework.web: INFO
     org.springframework.security: INFO
     org.springframework.cloud: INFO
-
-    # Application-specific logging
-    org.atlas: INFO
-    org.atlas.services: INFO
-    org.atlas.controllers: INFO
-    org.atlas.repositories: INFO
-    org.atlas.security: INFO
-
-    # Performance-critical services - minimal logging
-    org.atlas.services.AuthService: WARN
-    org.atlas.services.CustomUserServiceDetails: WARN
-    org.atlas.services.DocumentService: WARN
-    org.atlas.services.UserService: WARN
-    org.atlas.services.OrganizationService: WARN
-    org.atlas.services.EmailService: WARN
-
-    # Framework and library logging
-    reactor.netty: WARN
-    reactor.core: WARN
-    org.hibernate: WARN
-    org.hibernate.SQL: ERROR
-    org.hibernate.type.descriptor.sql.BasicBinder: ERROR
-
-    # HTTP client logging
-    org.springframework.web.reactive.function.client: WARN
-
-    # Database and connection pooling
-    com.zaxxer.hikari: WARN
-    org.springframework.jdbc: WARN
-
-    # Service discovery logging
-    com.netflix.discovery: WARN
-    com.netflix.eureka: WARN
-
-    # Config client logging
-    org.springframework.cloud.config: WARN
-
-    # Security framework logging
-    org.springframework.security.web: WARN
-    org.springframework.security.authentication: WARN
-
-    # Reduce noise from common libraries
-    org.apache.http: WARN
-    org.apache.tomcat: WARN
-    io.netty: WARN
-
+    org.atlas: DEBUG
+    org.atlas.services: DEBUG
+    org.atlas.controllers: DEBUG
+    org.atlas.repositories: DEBUG
+    org.atlas.security: DEBUG
+    reactor.netty: INFO
+    reactor.core: INFO
+    org.hibernate: INFO
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
   pattern:
-    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] [%X{traceId:-},%X{spanId:-}] %-5level %logger{36} - %msg%n"
-    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] [%X{traceId:-},%X{spanId:-}] %-5level %logger{36} - %msg%n"
-
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] [trace=%X{traceId:-},span=%X{spanId:-}] [%X{correlationId}] %-5level %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] [trace=%X{traceId:-},span=%X{spanId:-}] [%X{correlationId}] %-5level %logger{36} - %msg%n"
   file:
     name: logs/application.log
-
+    max-size: 10MB
+    max-history: 10
+    total-size-cap: 100MB
   logback:
     rollingpolicy:
       max-file-size: 10MB
       max-history: 7
       total-size-cap: 100MB
       file-name-pattern: logs/archived/application-%d{yyyy-MM-dd}.%i.log.gz
-
-# Resilience patterns
-resilience4j:
-  circuitbreaker:
-    configs:
-      default:
-        sliding-window-size: 10
-        failure-rate-threshold: 50
-        wait-duration-in-open-state: 30s
-        permitted-number-of-calls-in-half-open-state: 3
-  retry:
-    configs:
-      default:
-        max-attempts: 3
-        wait-duration: 1s
-        exponential-backoff-multiplier: 2
-  timelimiter:
-    configs:
-      default:
-        timeout-duration: 10s
