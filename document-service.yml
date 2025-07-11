@@ -2,13 +2,6 @@ server:
   port: 8084
 
 spring:
-  application:
-    name: document-service
-  cloud:
-    config:
-      uri: http://localhost:8888
-  config:
-    import: optional:configserver:http://localhost:8888
   data:
     mongodb:
       uri: mongodb://localhost:27017/playbook_document
@@ -21,78 +14,4 @@ spring:
       default-receive-queue: document-queue
       exchange: data-exchange
 
-# Resilience4j Circuit Breaker Configuration
-resilience4j:
-  circuitbreaker:
-    instances:
-      authService:
-        sliding-window-size: 10
-        minimum-number-of-calls: 5
-        permitted-number-of-calls-in-half-open-state: 3
-        automatic-transition-from-open-to-half-open-enabled: true
-        wait-duration-in-open-state: 5s
-        failure-rate-threshold: 50
-        event-consumer-buffer-size: 10
-      userService:
-        sliding-window-size: 10
-        minimum-number-of-calls: 5
-        permitted-number-of-calls-in-half-open-state: 3
-        automatic-transition-from-open-to-half-open-enabled: true
-        wait-duration-in-open-state: 5s
-        failure-rate-threshold: 50
-        event-consumer-buffer-size: 10
-      organizationService:
-        sliding-window-size: 10
-        minimum-number-of-calls: 5
-        permitted-number-of-calls-in-half-open-state: 3
-        automatic-transition-from-open-to-half-open-enabled: true
-        wait-duration-in-open-state: 5s
-        failure-rate-threshold: 50
-        event-consumer-buffer-size: 10
-  retry:
-    instances:
-      authService:
-        max-attempts: 3
-        wait-duration: 1s
-        retry-exceptions:
-          - org.springframework.web.reactive.function.client.WebClientResponseException
-          - java.net.ConnectException
-      userService:
-        max-attempts: 3
-        wait-duration: 1s
-        retry-exceptions:
-          - org.springframework.web.reactive.function.client.WebClientResponseException
-          - java.net.ConnectException
-      organizationService:
-        max-attempts: 3
-        wait-duration: 1s
-        retry-exceptions:
-          - org.springframework.web.reactive.function.client.WebClientResponseException
-          - java.net.ConnectException
-  timelimiter:
-    instances:
-      authService:
-        timeout-duration: 3s
-        cancel-running-future: true
-      userService:
-        timeout-duration: 3s
-        cancel-running-future: true
-      organizationService:
-        timeout-duration: 3s
-        cancel-running-future: true
 
-# Spring Boot 3.x Zipkin configuration
-management:
-  tracing:
-    sampling:
-      probability: 1.0
-  zipkin:
-    tracing:
-      endpoint: http://localhost:9411/api/v2/spans
-  endpoints:
-    web:
-      exposure:
-        include: "*"
-  endpoint:
-    health:
-      show-details: always

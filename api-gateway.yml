@@ -2,65 +2,57 @@ server:
   port: 8080
 
 spring:
-  application:
-    name: api-gateway
-  cloud:
-    config:
-      uri: http://localhost:8888
-  config:
-    import: optional:configserver:http://localhost:8888
-    gateway:
-      discovery:
-        locator:
-          enabled: true
-          lower-case-service-id: true
-      routes:
-        - id: auth-service
-          uri: lb://AUTH-SERVICE
-          predicates:
-            - Path=/auth/**
-          filters:
-            - name: CircuitBreaker
-              args:
-                name: authService
-                fallbackUri: forward:/fallback/auth
-        - id: user-service
-          uri: lb://USER-SERVICE
-          predicates:
-            - Path=/user/**
-          filters:
-            - name: CircuitBreaker
-              args:
-                name: userService
-                fallbackUri: forward:/fallback/user
-        - id: organization-service
-          uri: lb://ORGANIZATION-SERVICE
-          predicates:
-            - Path=/org/**
-          filters:
-            - name: CircuitBreaker
-              args:
-                name: organizationService
-                fallbackUri: forward:/fallback/organization
-        - id: document-service
-          uri: lb://DOCUMENT-SERVICE
-          predicates:
-            - Path=/document/**
-          filters:
-            - name: CircuitBreaker
-              args:
-                name: documentService
-                fallbackUri: forward:/fallback/document
-        - id: email-service
-          uri: lb://EMAIL-SERVICE
-          predicates:
-            - Path=/email/**
-          filters:
-            - name: CircuitBreaker
-              args:
-                name: emailService
-                fallbackUri: forward:/fallback/email
-
+  gateway:
+    discovery:
+    locator:
+       enabled: true
+       lower-case-service-id: true
+    routes:
+      - id: auth-service
+        uri: lb://AUTH-SERVICE
+        predicates:
+          - Path=/auth/**
+        filters:
+          - name: CircuitBreaker
+            args:
+              name: authService
+              fallbackUri: forward:/fallback/auth
+      - id: user-service
+        uri: lb://USER-SERVICE
+        predicates:
+          - Path=/user/**
+        filters:
+          - name: CircuitBreaker
+            args:
+              name: userService
+              fallbackUri: forward:/fallback/user
+      - id: organization-service
+        uri: lb://ORGANIZATION-SERVICE
+        predicates:
+          - Path=/org/**
+        filters:
+          - name: CircuitBreaker
+            args:
+              name: organizationService
+              fallbackUri: forward:/fallback/organization
+      - id: document-service
+        uri: lb://DOCUMENT-SERVICE
+        predicates:
+          - Path=/document/**
+        filters:
+          - name: CircuitBreaker
+            args:
+              name: documentService
+              fallbackUri: forward:/fallback/document
+      - id: email-service
+        uri: lb://EMAIL-SERVICE
+        predicates:
+          - Path=/email/**
+        filters:
+          - name: CircuitBreaker
+            args:
+              name: emailService
+              fallbackUri: forward:/fallback/email
 
 # Resilience4j Circuit Breaker Configuration
 resilience4j:
@@ -107,21 +99,7 @@ resilience4j:
         failure-rate-threshold: 50
         event-consumer-buffer-size: 10
 
-# Spring Boot 3.x Zipkin configuration
-management:
-  tracing:
-    sampling:
-      probability: 1.0
-  zipkin:
-    tracing:
-      endpoint: http://localhost:9411/api/v2/spans
-  endpoints:
-    web:
-      exposure:
-        include: "*"
-  endpoint:
-    health:
-      show-details: always
+
 
 
 
