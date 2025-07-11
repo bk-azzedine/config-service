@@ -46,8 +46,7 @@ management:
       endpoint: http://localhost:9411/api/v2/spans
 
 spring:
-  application:
-    name: ${spring.application.name:atlas-service}
+
 
   # Distributed tracing configuration
   sleuth:
@@ -199,17 +198,3 @@ resilience4j:
     configs:
       default:
         timeout-duration: 10s
-
-# Feign client configuration
-feign:
-  client:
-    config:
-      default:
-        connect-timeout: 5000
-        read-timeout: 10000
-        logger-level: basic
-  compression:
-    request:
-      enabled: true
-    response:
-      enabled: true
