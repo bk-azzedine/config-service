@@ -29,12 +29,7 @@ management:
     health:
       show-details: always
 
-spring:
-  zipkin:
-    base-url: http://zipkin:9411
-  sleuth:
-    sampler:
-      probability: 1.0
+
 
 # Resilience4j Circuit Breaker Configuration (shared across services)
 resilience4j:
