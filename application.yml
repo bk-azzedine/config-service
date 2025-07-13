@@ -1,7 +1,5 @@
 
-spring:
-  main:
-    web-application-type: reactive
+
 eureka:
   client:
     service-url:

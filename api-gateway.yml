@@ -2,8 +2,6 @@ server:
   port: 8080
 
 
-
-
 # Resilience4j Circuit Breaker Configuration
 resilience4j:
   circuitbreaker:
