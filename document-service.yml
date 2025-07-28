@@ -6,7 +6,7 @@ spring:
     mongodb:
       host: localhost
       port: 27017
-      database: playbook_document
+      database: documents
       username: mongo
       password: Bakaazzedine456
       authentication-database: admin
