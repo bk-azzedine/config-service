@@ -7,8 +7,8 @@ spring:
       host: localhost
       port: 27017
       database: playbook_document
-      username: your_mongo_username
-      password: your_mongo_password
+      username: mongo
+      password: Bakaazzedine456
       authentication-database: admin
   rabbitmq:
     host: localhost
