@@ -4,7 +4,12 @@ server:
 spring:
   data:
     mongodb:
-      uri: mongodb://localhost:27017/playbook_document
+      host: localhost
+      port: 27017
+      database: playbook_document
+      username: mongo
+      password: Bakaazzedine456
+      authentication-database: admin
   rabbitmq:
     host: localhost
     port: 5672
@@ -13,5 +18,3 @@ spring:
     template:
       default-receive-queue: document-queue
       exchange: data-exchange
-
-
