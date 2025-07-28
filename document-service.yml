@@ -4,7 +4,12 @@ server:
 spring:
   data:
     mongodb:
-      uri: mongodb://localhost:27017/playbook_document
+      host: localhost
+      port: 27017
+      database: playbook_document
+      username: your_mongo_username
+      password: your_mongo_password
+      authentication-database: admin
   rabbitmq:
     host: localhost
     port: 5672
