@@ -8,7 +8,7 @@ spring:
   rabbitmq:
     host: localhost
     port: 5672
-    username: admin
+    username: mongo
     password: Bakaazzedine456
     template:
       default-receive-queue: document-queue
